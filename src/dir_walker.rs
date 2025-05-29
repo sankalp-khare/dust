@@ -48,6 +48,7 @@ pub struct WalkData<'a> {
     pub follow_links: bool,
     pub progress_data: Arc<PAtomicInfo>,
     pub errors: Arc<Mutex<RuntimeErrors>>,
+    pub verbose: bool,
 }
 
 pub fn walk_it(dirs: HashSet<PathBuf>, walk_data: &WalkData) -> Vec<Node> {
@@ -206,6 +207,10 @@ fn walk(dir: PathBuf, walk_data: &WalkData, depth: usize) -> Option<Node> {
     let prog_data = &walk_data.progress_data;
     let errors = &walk_data.errors;
 
+    if walk_data.verbose {
+        eprintln!("Scanning: {}", dir.display());
+    }
+
     let children = if dir.is_dir() {
         let read_dir = fs::read_dir(&dir);
         match read_dir {
@@ -239,6 +244,12 @@ fn walk(dir: PathBuf, walk_data: &WalkData, depth: usize) -> Option<Node> {
                                             walk_data,
                                         );
 
+                                        if walk_data.verbose {
+                                            if let Some(ref file) = node {
+                                                eprintln!("    File: {} (size: {})", entry.path().display(), file.size);
+                                            }
+                                        }
+
                                         prog_data.num_files.fetch_add(1, ORDERING);
                                         if let Some(ref file) = node {
                                             prog_data
@@ -248,9 +259,14 @@ fn walk(dir: PathBuf, walk_data: &WalkData, depth: usize) -> Option<Node> {
 
                                         return node;
                                     }
+                                } else if walk_data.verbose {
+                                    eprintln!("    Ignored: {}", entry.path().display());
                                 }
                             }
                             Err(ref failed) => {
+                                if walk_data.verbose {
+                                    eprintln!("    Error reading entry: {}", failed);
+                                }
                                 if handle_error_and_retry(failed, &dir, walk_data) {
                                     return walk(dir.clone(), walk_data, depth);
                                 }
@@ -261,6 +277,9 @@ fn walk(dir: PathBuf, walk_data: &WalkData, depth: usize) -> Option<Node> {
                     .collect()
             }
             Err(failed) => {
+                if walk_data.verbose {
+                    eprintln!("Error reading directory {}: {}", dir.display(), failed);
+                }
                 if handle_error_and_retry(&failed, &dir, walk_data) {
                     return walk(dir, walk_data, depth);
                 } else {
@@ -270,6 +289,9 @@ fn walk(dir: PathBuf, walk_data: &WalkData, depth: usize) -> Option<Node> {
         }
     } else {
         if !dir.is_file() {
+            if walk_data.verbose {
+                eprintln!("Not a file: {}", dir.display());
+            }
             let mut editable_error = errors.lock().unwrap();
             let bad_file = dir.as_os_str().to_string_lossy().into();
             editable_error.file_not_found.insert(bad_file);
@@ -354,6 +376,7 @@ mod tests {
             follow_links: false,
             progress_data: indicator.data.clone(),
             errors: Arc::new(Mutex::new(RuntimeErrors::default())),
+            verbose: false,
         }
     }
 

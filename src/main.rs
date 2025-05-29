@@ -269,6 +269,7 @@ fn main() {
         follow_links,
         progress_data: indicator.data.clone(),
         errors: errors_for_rayon,
+        verbose: config.get_verbose(&options),
     };
     let threads_to_use = config.get_threads(&options);
     let stack_size = config.get_custom_stack_size(&options);

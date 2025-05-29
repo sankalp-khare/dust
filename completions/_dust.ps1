@@ -90,6 +90,8 @@ Register-ArgumentCompleter -Native -CommandName 'dust' -ScriptBlock {
             [CompletionResult]::new('--only-file', '--only-file', [CompletionResultType]::ParameterName, 'Only files will be displayed. (Finds your largest files)')
             [CompletionResult]::new('-j', '-j', [CompletionResultType]::ParameterName, 'Output the directory tree as json to the current directory')
             [CompletionResult]::new('--output-json', '--output-json', [CompletionResultType]::ParameterName, 'Output the directory tree as json to the current directory')
+            [CompletionResult]::new('-V', '-V ', [CompletionResultType]::ParameterName, 'Enable verbose output showing detailed information about files and directories being processed')
+            [CompletionResult]::new('--verbose', '--verbose', [CompletionResultType]::ParameterName, 'Enable verbose output showing detailed information about files and directories being processed')
             [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
             [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
             [CompletionResult]::new('-V', '-V ', [CompletionResultType]::ParameterName, 'Print version')

@@ -106,6 +106,8 @@ m\:"last modified time"))' \
 '(-D --only-dir)--only-file[Only files will be displayed. (Finds your largest files)]' \
 '-j[Output the directory tree as json to the current directory]' \
 '--output-json[Output the directory tree as json to the current directory]' \
+'-V[Enable verbose output showing detailed information about files and directories being processed]' \
+'--verbose[Enable verbose output showing detailed information about files and directories being processed]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \

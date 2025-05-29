@@ -36,6 +36,7 @@ pub struct Config {
     pub output_json: Option<bool>,
     pub print_errors: Option<bool>,
     pub files0_from: Option<String>,
+    pub verbose: Option<bool>,
 }
 
 impl Config {
@@ -157,6 +158,10 @@ impl Config {
 
     pub fn get_changed_time_operator(&self, options: &Cli) -> Option<(Operator, i64)> {
         get_filter_time_operator(options.ctime.as_ref(), get_current_date_epoch_seconds())
+    }
+
+    pub fn get_verbose(&self, options: &Cli) -> bool {
+        Some(true) == self.verbose || options.verbose
     }
 }
 

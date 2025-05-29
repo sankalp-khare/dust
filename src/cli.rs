@@ -185,6 +185,10 @@ pub struct Cli {
     /// while a/c/m for last accessed/changed/modified time
     #[arg(short('m'), long, value_enum)]
     pub filetime: Option<FileTime>,
+
+    /// Enable verbose output showing detailed information about files and directories being processed
+    #[arg(short('V'), long)]
+    pub verbose: bool,
 }
 
 #[derive(Clone, Copy, Debug, ValueEnum)]
