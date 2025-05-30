@@ -187,7 +187,7 @@ pub struct Cli {
     pub filetime: Option<FileTime>,
 
     /// Enable verbose output showing detailed information about files and directories being processed
-    #[arg(short('V'), long)]
+    #[arg(long)]
     pub verbose: bool,
 }
 

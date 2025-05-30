@@ -281,8 +281,14 @@ fn walk(dir: PathBuf, walk_data: &WalkData, depth: usize) -> Option<Node> {
                     eprintln!("Error reading directory {}: {}", dir.display(), failed);
                 }
                 if handle_error_and_retry(&failed, &dir, walk_data) {
+                    if walk_data.verbose {
+                        eprintln!("Retrying...");
+                    }
                     return walk(dir, walk_data, depth);
                 } else {
+                    if walk_data.verbose {
+                        eprintln!("We didn't handle_error_and_retry, so we're bailing out");
+                    }
                     vec![]
                 }
             }
@@ -310,34 +316,44 @@ fn walk(dir: PathBuf, walk_data: &WalkData, depth: usize) -> Option<Node> {
 }
 
 fn handle_error_and_retry(failed: &Error, dir: &Path, walk_data: &WalkData) -> bool {
+    eprintln!("> We've entered handle_error_and_retry");
     let mut editable_error = walk_data.errors.lock().unwrap();
+    eprintln!("> We've made it past the walk_data.errors.lock().unwrap()");
     match failed.kind() {
         std::io::ErrorKind::PermissionDenied => {
+            eprintln!(">> We've entered the PermissionDenied error handling block");
             editable_error
                 .no_permissions
                 .insert(dir.to_string_lossy().into());
         }
         std::io::ErrorKind::InvalidInput => {
+            eprintln!(">> We've entered the InvalidInput error handling block");
             editable_error
                 .no_permissions
                 .insert(dir.to_string_lossy().into());
         }
         std::io::ErrorKind::NotFound => {
+            eprintln!(">> We've entered the NotFound error handling block");
             editable_error.file_not_found.insert(failed.to_string());
         }
         std::io::ErrorKind::Interrupted => {
+            eprintln!(">> We've entered the Interrupted error handling block");
             let mut editable_error = walk_data.errors.lock().unwrap();
+            eprintln!(">> We've made it past the walk_data.errors.lock().unwrap()");
             editable_error.interrupted_error += 1;
             if editable_error.interrupted_error > 3 {
                 panic!("Multiple Interrupted Errors occurred while scanning filesystem. Aborting");
             } else {
+                eprintln!(">>> We're returning true");
                 return true;
             }
         }
         _ => {
+            eprintln!(">> We've entered the unknown/catchall error handling block");
             editable_error.unknown_error.insert(failed.to_string());
         }
     }
+    eprintln!("> We've exited the match block and are returning false");
     false
 }
 

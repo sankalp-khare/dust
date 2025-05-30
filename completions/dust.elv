@@ -87,7 +87,6 @@ set edit:completion:arg-completer[dust] = {|@words|
             cand --only-file 'Only files will be displayed. (Finds your largest files)'
             cand -j 'Output the directory tree as json to the current directory'
             cand --output-json 'Output the directory tree as json to the current directory'
-            cand -V 'Enable verbose output showing detailed information about files and directories being processed'
             cand --verbose 'Enable verbose output showing detailed information about files and directories being processed'
             cand -h 'Print help (see more with ''--help'')'
             cand --help 'Print help (see more with ''--help'')'
